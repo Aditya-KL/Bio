@@ -11,10 +11,18 @@
         <h1>Tic Tac Toe</h1>
         <div id="subPage">
             <h2>Select Game Mode</h2>
-            <button onclick="location.href='single.html'" type="button">Singleplayer</button>
+            <button onclick="setDepth(1)" type="button">Singleplayer (Easy)</button>
+            <button onclick="setDepth(4)" type="button">Singleplayer (Medium)</button>
+            <button onclick="setDepth(9)" type="button">Singleplayer (Hard)</button>
             <button onclick="location.href='multi.html'" type="button">Multiplayer</button>
         </div>
     </div>
+
 </body>
-<script src="script.js"></script>
+<script>
+    function setDepth(depth) {
+        sessionStorage.setItem('maxDepth', depth);
+        window.location.href = 'single.html';
+    }
+</script>
 </html>

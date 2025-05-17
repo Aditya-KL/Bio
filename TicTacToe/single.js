@@ -1,4 +1,5 @@
 // X is human(minimizing player)  and   O is AI (maximizing player)
+const hardness = sessionStorage.getItem('maxDepth') || 2;
 const boxes = document.querySelectorAll(".box");
 let resetBtn = document.querySelector("#reset_btn");
 let winnerBox = document.querySelector(".result");
@@ -44,18 +45,22 @@ const checkWinner = (board) =>{                     //Check in array that we mad
     return null;
 };
 
-const minimax = (board,depth,isMaximizing) => {
+const minimax = (board, depth, isMaximizing, count) => {
     let winner = checkWinner(board);
-    if(winner == "X") return -10 + depth;
-    if(winner == "O") return 10 - depth;
-    if (board.every(box => box != "")) return 0;
+    if (winner === "X") return -10 + depth;
+    if (winner === "O") return 10 - depth;
+    if (board.every(box => box !== "")) return 0;
+    
+    if (count === 0) {
+        return 0;
+    }
 
     if (isMaximizing) {
         let best = -Infinity;
         for (let i = 0; i < 9; i++) {
             if (board[i] === "") {
                 board[i] = "O";
-                best = Math.max(best, minimax(board, depth + 1, false));
+                best = Math.max(best, minimax(board, depth + 1, false, count - 1));
                 board[i] = "";
             }
         }
@@ -65,7 +70,7 @@ const minimax = (board,depth,isMaximizing) => {
         for (let i = 0; i < 9; i++) {
             if (board[i] === "") {
                 board[i] = "X";
-                best = Math.min(best, minimax(board, depth + 1, true));
+                best = Math.min(best, minimax(board, depth + 1, true, count - 1));
                 board[i] = "";
             }
         }
@@ -73,15 +78,17 @@ const minimax = (board,depth,isMaximizing) => {
     }
 };
 
-const bestMove = (board) =>{
+const bestMove = (board) => {
     let bestVal = -Infinity;
     let move = -1;
-    for(let i=0; i<9; i++){
+    let maxDepth = hardness;
+
+    for (let i = 0; i < 9; i++) {
         if (board[i] === "") {
             board[i] = "O";
-            let moveVal = minimax(board, 0, false);
+            let moveVal = minimax(board, 0, false, maxDepth);
             board[i] = "";
-            if(moveVal > bestVal){
+            if (moveVal > bestVal) {
                 move = i;
                 bestVal = moveVal;
             }
@@ -89,6 +96,7 @@ const bestMove = (board) =>{
     }
     return move;
 };
+
 
 let playAI = () =>{
     let board = Array.from(boxes).map(box => box.innerText)

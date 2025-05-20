@@ -131,42 +131,37 @@ tasks.addEventListener("click", handleTaskClick);
 
 function saveData(){
     let allTasks = [];
-    listUL.forEach(priority => {
-        let ul = document.getElementById(priority);
-        let tasks = ul.querySelectorAll("li");
-        tasks.forEach(task => {
-            allTasks.push({
-                text: task.childNodes[0].textContent.trim(),
-                priority: task.dataset.originalParent,
-                checked: task.classList.contains("checked")
-            });
-        });
+    document.querySelectorAll("#tasks li").forEach(li => {
+    allTasks.push({
+      text: li.childNodes[0].nodeValue.trim(),
+      priority: li.dataset.originalParent,
+      checked: li.classList.contains("checked")
     });
+  });
     localStorage.setItem("tasks", JSON.stringify(allTasks));
     localStorage.setItem("theme", mode);
 };
-function loadData() {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
-        themeBtn.click();
-    }
 
-    const savedTasks = JSON.parse(localStorage.getItem("tasks"));
-    if (savedTasks && Array.isArray(savedTasks)) {
-        savedTasks.forEach(taskData => {
-            let li = document.createElement("li");
-            li.innerText = taskData.text;
-            let span = document.createElement("span");
-            span.innerHTML = "\u00d7";
-            li.appendChild(span);
-            li.dataset.originalParent = taskData.priority;
-            if (taskData.checked) {
-                li.classList.add("checked");
-                document.getElementById("checked").appendChild(li);
-            } else {
-                document.getElementById(taskData.priority).appendChild(li);
-            }
-        });
-    }
-};
+function loadData() {
+    const storedData = JSON.parse(localStorage.getItem("tasks"));
+    if (!storedData) return;
+
+    if (localStorage.getItem("theme") === "dark" && mode !== "dark") themeBtn.click();
+
+    storedData.forEach(task => {
+        const li = document.createElement("li");
+        li.textContent = task.text;
+        if (task.checked) li.classList.add("checked");
+        li.dataset.originalParent = task.priority;
+
+        const span = document.createElement("span");
+        span.innerHTML = "\u00d7";
+        li.appendChild(span);
+
+        let parentId = task.checked ? "checked" : task.priority;
+        let parentElem = document.getElementById(parentId) || document.getElementById("tasks");
+        parentElem.appendChild(li);
+    });
+}
+
 window.addEventListener("DOMContentLoaded", loadData);

@@ -130,3 +130,7 @@ resetBtn.addEventListener("click", () =>{
         box.disabled = false;
     });
 });
+
+menuBtn.addEventListener("click", () =>{
+    history.back();
+});

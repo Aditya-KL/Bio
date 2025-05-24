@@ -132,5 +132,5 @@ resetBtn.addEventListener("click", () =>{
 });
 
 menuBtn.addEventListener("click", () =>{
-    history.back();
+    window.location.href = "tictactoe.html";
 });
